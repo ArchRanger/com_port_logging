@@ -1,0 +1,13 @@
+[
+
+{"Time": "2022-09-27 16:45:08", "Name": "USB Bilesik Aygit", "Seri_No": "5&2AD35BE9&0&7", "Vid": "322E", "Pid": "202C", "Message": "Bu cihaz giris yapti."}
+]
+{"Time": "2022-09-27 16:45:14", "Name": "USB Bilesik Aygit", "Seri_No": "5&2AD35BE9&0&1", "Vid": "18F8", "Pid": "0F97", "Message": "USB cihazi cikarildi. Takili durdugu sure: 0:0:6 "},
+,{'Time': '2022-09-27 16:45:08', 'Name': 'USB Bilesik Aygit', 'Seri_No': '5&2AD35BE9&0&7', 'Vid': '322E', 'Pid': '202C', 'Message': 'Bu cihaz giris yapti.'}
+]
+{"Time": "2022-09-27 16:45:17", "Name": "USB Bilesik Aygit", "Seri_No": "5&2AD35BE9&0&1", "Vid": "18F8", "Pid": "0F97", "Message": "USB cihazi cikarildi. Takili durdugu sure: 0:0:3 "},
+,{'Time': '2022-09-27 16:45:08', 'Name': 'USB Bilesik Aygit', 'Seri_No': '5&2AD35BE9&0&7', 'Vid': '322E', 'Pid': '202C', 'Message': 'Bu cihaz giris yapti.'}
+]
+{"Time": "2022-09-27 16:45:20", "Name": "USB Bilesik Aygit", "Seri_No": "5&2AD35BE9&0&1", "Vid": "18F8", "Pid": "0F97", "Message": "USB cihazi cikarildi. Takili durdugu sure: 0:0:3 "},
+,{'Time': '2022-09-27 16:45:08', 'Name': 'USB Bilesik Aygit', 'Seri_No': '5&2AD35BE9&0&7', 'Vid': '322E', 'Pid': '202C', 'Message': 'Bu cihaz giris yapti.'}
+]{"Time": "2022-10-07 17:35:54", "Name": "SAMSUNG Mobile USB Composite Device ", "Seri_No": "R58N12LE7QZ", "Vid": "04E8", "Pid": "6860", "Message": "Bu cihaz giris yapti."},
