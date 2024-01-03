@@ -7,13 +7,13 @@ Created on Mon Aug 29 17:55:38 2022
 
 import datetime
 import time
-import com_port_scanning  # ilgili class import edildi
-import json  # JSON kütüphanesi eklendi
-import database_cp  # Database işlemleri sayfası
-import win32com.client  # usb taramada gerekli modül
+import com_port_scanning 
+import json 
+import database_cp  
+import win32com.client
 
 
-class DataObj:  # portlar için daha detaylı bir obje
+class DataObj:  
     def __init__(self, data: dict):
         self.data = data
         self.time = data.get("Time")
@@ -28,26 +28,25 @@ class DataObj:  # portlar için daha detaylı bir obje
         self.message = message
 
 
-# Database işlemleri için veriler JSON dosyasına çevriliyor.
-# (Çalıştırılacak olan ve oluşturulan her modül dahil varlıkları kullanan ana sınıf.)
+
 class DalJson:
-    wmi = win32com.client.GetObject("winmgmts:")  # usb'yi obje şeklinde çekecek method
+    wmi = win32com.client.GetObject("winmgmts:")  
     h1,m1,s1,h2,m2,s2 = datetime.datetime.now().time().hour,datetime.datetime.now().time().minute,datetime.datetime.now().time().second,datetime.datetime.now().time().hour,datetime.datetime.now().time().minute,datetime.datetime.now().time().second  # uzun uzun saat ayarı düzenlemesi
     counter,mounter = 0,0
     alpha, theta = [],[]
-    beta, omega = ["S"],["S"]  # bunların her birisi hem usb hem port taraması
-                        # için oluşturulan "ikişer adet ayrı" değişkenler (alpha-port theta-usb, h1-port h2-usb).
+    beta, omega = ["S"],["S"]  
+                        
 
     while True:
-        # while döngüsü ile portlar 2 saniyelik delay ile kayt işlemi yapılmaktadır. (çok daha farklı bir hal aldı.)
+        
         print("başladı;")
-        for port in com_port_scanning.COMPorts.get_com_ports().data:  # ilk sayfadaki port objesinin datası alınıyor
+        for port in com_port_scanning.COMPorts.get_com_ports().data:  
             t = com_port_scanning.Time.time_now(self=0)
             p = port.device
             n = port.description
             sn = "None"
-            if port.serial_number is not None:  # portta seri numarası var ise yukarıdaki
-                                                # obje içerisine değişkenler tanınıyor
+            if port.serial_number is not None:  
+                
                 sn = port.serial_number
             db = DataObj({
                         "Time": str(t),
@@ -57,48 +56,48 @@ class DalJson:
                         "Message": "mesaj yok."
             })
             print("port deneme: "+p)  # sadece deneme
-            if not p == "COM5" and not p =="COM6":  # otomatik olarak içerideki algılanan
-                                                    # 5 ve 6. portları görmezden gelmesi için
-                alpha.append(db.data)  # yukarıdaki alpha listesine şu oluşturulan objenin "data"sını ekledik
-                x = db.data            # datayı aynı zamanda x ismini verdiğimiz bir değişkene de atadık
+            if not p == "COM5" and not p =="COM6":  
+                
+                alpha.append(db.data)  
+                x = db.data            
                 for a in alpha:
                     s = str(a.get("Seri_No"))
                     s= "12345678910"
                     if len(s) >=1:
-                        print("none değil")  # burası dahil şu 4 satır biraz gereksiz gibi, çok takılmamak lazım
+                        print("none değil")  
                         a["Message"] = "Bu cihaz giris yapti."
 
-                        if counter == 0:  # burası biraz karışık, sayaç 0'sa (hiç girmemişse bir cihaz) 1 artırsın
-                            counter += 1  # ve bir daha giriş olmuşsa, 2 olmuşsa 1 eksilsin. Dolayısıyla sayaç
-                        if counter == 2:  # 0 iken (cihaz çıkmış mesajı vermesin) ancak cihaz var iken çıkarılma
-                            counter -= 1  # yapıldığında sayaç eksilip altlardaki kodlarda onun mesajı yazdırılıyor
+                        if counter == 0: 
+                            counter += 1  
+                        if counter == 2:  
+                            counter -= 1 
                         for b in beta:
-                            if b != s:  # beta listesindeki her bir b eğer s'ye eşit değilse eşitliyor, sonra tekrar
-                                beta[0] = s  # değiştiriliyor, sebebi her farklı cihaz girişinde kontrol mekanizması.
+                            if b != s:  
+                                beta[0] = s  
                                 h1=datetime.datetime.now().time().hour
                                 m1=datetime.datetime.now().time().minute
-                                s1=datetime.datetime.now().time().second  # cihaz giriş yaptığında süreyi almak
+                                s1=datetime.datetime.now().time().second 
                                 with open('data.json',
-                                          'a',encoding="utf-8") as json_dosya:  # json dosyayı yoksa oluşturulup ilgili kayıtları ekler
+                                          'a',encoding="utf-8") as json_dosya:  
                                     json.dump(a, json_dosya)
                                     json_dosya.write(',\n')
                                     # json_dosya.write('"Bu cihaz giris yapti.",\n') # bu satırı görmeyin,
-                                database_cp.MySQL_processor_Port(a["Time"], a["Port"], a["Name"], a["Seri_No"], a["Message"])  # json'a atmayla birlikte database'e de gönderme yapılıyor
-                                com_port_scanning.time.sleep(3)  # (diğer modül içerisine gönderilerek)
-            elif len(com_port_scanning.COMPorts.get_com_ports().data) == 2:  # sadece 2 veri,
-                print("none ")  # (com5 ve 6) var demektir ve boş saymasını istiyoruz bu durumda, ve listeden eksiltme
-                if len(alpha) >= 1:  # yapıyoruz yukarılarda bahsedildiği gibi.
-                    alpha.pop()  # alpha'da varsa obje (sadece 5 ve 6 kaldığı için) var olan bu obje çıkarılıyor
-                # for i in range(counter): # (burayı da görmeyin)
-                beta[0] = "S"  # beta tekrar eski haline dönüştürüldü, tekrar yeni cihaz alacak hale getirildi
-                if counter == 1:  # bu haldeyken sayaç 1 ise daha önceki alınan süre ile geçen zamanı buluyor
+                                database_cp.MySQL_processor_Port(a["Time"], a["Port"], a["Name"], a["Seri_No"], a["Message"]) 
+                                com_port_scanning.time.sleep(3)  
+            elif len(com_port_scanning.COMPorts.get_com_ports().data) == 2:  
+                print("none ")  
+                if len(alpha) >= 1:  
+                    alpha.pop()  
+                
+                beta[0] = "S"  
+                if counter == 1:  
                     y = com_port_scanning.Time_modifier(h1, m1, s1)
                     y = y.get_time()
-                    x["Message"] = f"USB cihazi cikarildi. Takili durdugu sure: {y} "  # bunları falan yazıyor
+                    x["Message"] = f"USB cihazi cikarildi. Takili durdugu sure: {y} "  
                     database_cp.MySQL_processor_Port(x["Time"], x["Port"], x["Name"], x["Seri_No"], x["Message"])
-                    with open('data.json', 'a',encoding="utf-8") as json_dosya:  # hem database'e hem de json
-                        json_dosya.write("\n")  # dosyasına çıkış yapıldığı ve süre bilgileri yazılıyor.
-                        # json_dosya.write(f"{x}") # (burayı da görmeyin)
+                    with open('data.json', 'a',encoding="utf-8") as json_dosya:  
+                        json_dosya.write("\n")  
+                        
                         json.dump(x, json_dosya)
                         json_dosya.write(",\n")
 
@@ -107,7 +106,7 @@ class DalJson:
             else:
                 time.sleep(0)
 
-        for usb in wmi.InstancesOf("Win32_USBHub"):  # buradan sonrası da yukarının aynısının "usb" için olan hali.
+        for usb in wmi.InstancesOf("Win32_USBHub"): 
             tn, vid, pid, srn, nm = str(com_port_scanning.Time.time_now(self=0)), str(usb.DeviceID[8:12]), \
                                     str(usb.DeviceID[17:21]), str(usb.DeviceID[22:]), str(usb.Name)
             datb = DataObj({
@@ -139,7 +138,7 @@ class DalJson:
                                 m2 = datetime.datetime.now().time().minute
                                 s2 = datetime.datetime.now().time().second
                                 with open('data.json',
-                                          'a',encoding="utf-8") as json_dosya:  # json dosyayı yoksa oluşturulup ilgili kayıtları ekler
+                                          'a',encoding="utf-8") as json_dosya:  
                                     json.dump(t, json_dosya)
                                     json_dosya.write(',\n')
                                     # json_dosya.write('"Bu cihaz giris yapti.",\n')
