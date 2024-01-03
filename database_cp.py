@@ -1,6 +1,4 @@
-﻿from abc import ABC  # abstract class modülü eklendi
-# database düzenleyici bir ana sınıf oluşturulup, onun altından da
-# iki önemli class oluşturuluyor, ilki portları, ikincisi ise usb girişlerini database'e gönderiyor
+﻿from abc import ABC  
 
 
 class MySQL_processor(ABC):
@@ -12,14 +10,14 @@ class MySQL_processor(ABC):
         self.message = message
 
 
-class MySQL_processor_Port(MySQL_processor):  # port için olanı,
+class MySQL_processor_Port(MySQL_processor): 
 
     def __init__(self, time, port, name, seri_no, message):
         super().__init__(time, name, seri_no, message)
 
         self.port = port
 
-        import mysql.connector  # database bağlantısı kurmak için gereken kodlar ve import edilecek modül ve hatalar
+        import mysql.connector  
         from mysql.connector import Error
         connection = mysql.connector.connect(host='localhost',
                                              db='comportlog',
@@ -27,24 +25,23 @@ class MySQL_processor_Port(MySQL_processor):  # port için olanı,
                                              passwd='sspspsdps'
                                              )
 
-        try:  # bağlantı kurulması deneniliyor, olmadığı taktirde hata verilecek
+        try:  
             if connection.is_connected():
                 db_Info = connection.get_server_info()
-                print("Connected to MySQL Server version ", db_Info)  # bağlantı kuruluysa MySQL bilgisini verir
+                print("Connected to MySQL Server version ", db_Info)  
                 cursor = connection.cursor()
                 cursor.execute("select database();")
                 record = cursor.fetchone()
-                print("You're connected to database: ", record)  # hangi database'e bağlanıldığını gösterir
+                print("You're connected to database: ", record)  
 
-                cursor = connection.cursor()  # bu satırı yazmasak da olur
+                cursor = connection.cursor()  
 
-                # burada da database içerisindeki istediğimiz tabloya o tabloda olan sınıflar ve içerisine
-                # yazılacaklar iki değişken halinde oluşturuluyor
+               
                 sql = "INSERT INTO logtable(Time,Port,Name,Seri_No,Message) VALUES (%s,%s,%s,%s,%s)"
                 values = (self.time, self.port, self.name, self.seri_no, self.message)
 
-                cursor.execute(sql, values)  # sonra bu iki değişken birleştirilerek ilgili tabloya yerleştiriliyor
-                connection.commit()          # çalışması için bu satır da yazılmalı
+                cursor.execute(sql, values)  
+                connection.commit()          
 
                 # cursor.execute("CREATE DATABASE pydb")
                 # cursor.execute("CREATE TABLE portlog (Time VARCHAR(255), Port VARCHAR(255), Name VARCHAR(255))")
@@ -53,16 +50,16 @@ class MySQL_processor_Port(MySQL_processor):  # port için olanı,
                 # for x in cursor:
                 #     print(x)              # (şu yukarıdaki 6 satırı görmeyin, alakasız)
 
-        except Error as e:  # bağantı kurulamadığı durumdaki hata
+        except Error as e: 
             print("Error while connecting to MySQL", e)
-        finally:  # hepsi bittikten sonra her türlü çalışacak kod kısmı, bağlantı kesiliyor ve bunun mesajını veriyor
+        finally:  
             if connection.is_connected():
                 cursor.close()
                 connection.close()
                 print("MySQL connection is closed")
 
 
-class MySQL_processor_USB(MySQL_processor):  # aynısının usb için olan alt sınıfı
+class MySQL_processor_USB(MySQL_processor): 
     def __init__(self, time, name, seri_no, vid, pid, message):
         super().__init__(time, name, seri_no, message)
         self.vid = vid
@@ -73,7 +70,7 @@ class MySQL_processor_USB(MySQL_processor):  # aynısının usb için olan alt s
         connection = mysql.connector.connect(host='localhost',
                                              db='comportlog',
                                              user='root',
-                                             passwd='sspspsdps'
+                                             passwd='1243564'
                                              )
 
         try:
@@ -108,10 +105,10 @@ class MySQL_processor_USB(MySQL_processor):  # aynısının usb için olan alt s
                 connection.close()
                 print("MySQL connection is closed")
 
-        # (host='192.168.1.158',
-        # database='abdullah',
+        # (host='192.168.1.***',
+        # database='abdu**',
         # user='root',
-        # password='serversql')
+        # password='servers**')
 
 
 
